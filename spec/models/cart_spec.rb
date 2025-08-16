@@ -13,6 +13,8 @@
 require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
+  let(:product) { create(:product, name: "Canned Tuna", description: "Packed with Omega 3", price: 59) }
+
   context "validations" do
     it "validates for presence of transaction_date" do
       cart = Cart.new(transaction_date: nil, gross_price: 100.00, net_price: 90.00, discounts: 10.00)
