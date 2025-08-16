@@ -12,4 +12,6 @@
 #
 class Cart < ApplicationRecord
   validates :transaction_date, :gross_price, :net_price, :discounts, presence: true
+
+  has_many :cart_items, dependent: :destroy
 end
