@@ -13,7 +13,8 @@
 require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
-  let(:product) { create(:product, name: "Canned Tuna", description: "Packed with Omega 3", price: 59) }
+  let(:product1) { create(:product, name: "Canned Tuna", description: "Packed with Omega 3", price: 3) }
+  let(:product2) { create(:product, name: "Coffee", description: "A rich and aromatic coffee blend.", price: 3) }
 
   context "validations" do
     it "validates for presence of transaction_date" do
@@ -34,6 +35,25 @@ RSpec.describe Cart, type: :model do
     it "validates for presence of discounts" do
       cart = Cart.new(transaction_date: Date.today, gross_price: 100.00, net_price: 90.00, discounts: nil)
       expect(cart.valid?).to be_falsey
+    end
+  end
+
+  context "relationships" do
+    it "has many cart_items" do
+      cart = Cart.new({
+        transaction_date: Date.today,
+        gross_price: 6.00,
+        net_price: 6.00,
+        discounts: 0,
+        cart_items_attributes: [
+          { product_id: product1.id, quantity: 1, gross_price: product1.price, net_price: product1.price, price: 0.00, discounts: 0 },
+          { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, price: 0.00, discounts: 0 }
+        ]
+      })
+
+      expect(cart.valid?).to be_truthy
+      expect(cart.cart_items.size).to eq(2)
+      expect(cart.save).to be_truthy
     end
   end
 end
