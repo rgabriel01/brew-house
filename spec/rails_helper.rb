@@ -41,7 +41,23 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation) # Cleans the entire database before the test suite
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction # Fastest for most tests
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start # Starts the cleaning process before each test
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean # Cleans up after each test
+  end
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
