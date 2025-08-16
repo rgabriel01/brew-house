@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_16_065229) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_16_103122) do
   create_table "cart_items", force: :cascade do |t|
     t.integer "cart_id", null: false
     t.integer "product_id", null: false
     t.integer "quantity", null: false
-    t.decimal "price", precision: 10, scale: 2, null: false
+    t.decimal "subtotal", precision: 10, scale: 2, null: false
     t.decimal "gross_price", precision: 10, scale: 2, null: false
     t.decimal "net_price", precision: 10, scale: 2, null: false
     t.decimal "discounts", precision: 10, scale: 2, null: false

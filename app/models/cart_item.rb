@@ -7,8 +7,8 @@
 #  gross_price :decimal(10, 2)   not null
 #  net_price   :decimal(10, 2)   not null
 #  notes       :text
-#  price       :decimal(10, 2)   not null
 #  quantity    :integer          not null
+#  subtotal    :decimal(10, 2)   not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  cart_id     :integer          not null
@@ -25,7 +25,7 @@
 #  product_id  (product_id => products.id)
 #
 class CartItem < ApplicationRecord
-  validates :quantity, :price, :gross_price, :net_price, :discounts, presence: true
+  validates :quantity, :subtotal, :gross_price, :net_price, :discounts, presence: true
 
   belongs_to :cart
   belongs_to :product

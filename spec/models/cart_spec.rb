@@ -46,8 +46,8 @@ RSpec.describe Cart, type: :model do
         net_price: 6.00,
         discounts: 0,
         cart_items_attributes: [
-          { product_id: product1.id, quantity: 1, gross_price: product1.price, net_price: product1.price, price: 0.00, discounts: 0 },
-          { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, price: 0.00, discounts: 0 }
+          { product_id: product1.id, quantity: 1, gross_price: product1.price, net_price: product1.price, subtotal: product1.price, discounts: 0 },
+          { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, subtotal: product2.price, discounts: 0 }
         ]
       })
 

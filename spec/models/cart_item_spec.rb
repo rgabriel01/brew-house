@@ -7,8 +7,8 @@
 #  gross_price :decimal(10, 2)   not null
 #  net_price   :decimal(10, 2)   not null
 #  notes       :text
-#  price       :decimal(10, 2)   not null
 #  quantity    :integer          not null
+#  subtotal    :decimal(10, 2)   not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  cart_id     :integer          not null
@@ -27,5 +27,43 @@
 require 'rails_helper'
 
 RSpec.describe CartItem, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let(:product) { create(:product, name: "Canned Tuna", description: "Packed with Omega 3", price: 3) }
+
+  context "validations" do
+    it "validates for presence of cart" do
+      cart_item = CartItem.new(product_id: product.id, quantity: nil, gross_price: 10.00, net_price: 9.00, discounts: 1.00, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Cart must exist")
+    end
+
+    it "validates for presence of product" do
+      cart_item = CartItem.new(cart_id: 1, product_id: nil, quantity: 1, gross_price: 10.00, net_price: 9.00, discounts: 1.00, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Product must exist")
+    end
+
+    it "validates for presence of quantity" do
+      cart_item = CartItem.new(cart_id: 1, product_id: product.id, quantity: nil, gross_price: 10.00, net_price: 9.00, discounts: 1.00, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Quantity can't be blank")
+    end
+
+    it "validates for presence of gross_price" do
+      cart_item = CartItem.new(cart_id: 1, product_id: product.id, quantity: 1, gross_price: nil, net_price: 9.00, discounts: 1.00, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Gross price can't be blank")
+    end
+
+    it "validates for presence of net_price" do
+      cart_item = CartItem.new(cart_id: 1, product_id: product.id, quantity: 1, gross_price: 10.00, net_price: nil, discounts: 1.00, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Net price can't be blank")
+    end
+
+    it "validates for presence of discounts" do
+      cart_item = CartItem.new(cart_id: 1, product_id: product.id, quantity: 1, gross_price: 10.00, net_price: 9.00, discounts: nil, subtotal: 9.00)
+      expect(cart_item.valid?).to be_falsey
+      expect(cart_item.errors.full_messages).to include("Discounts can't be blank")
+    end
+  end
 end
