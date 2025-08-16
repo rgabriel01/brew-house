@@ -44,9 +44,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-
-  # annotate models with schema information
-  gem "annotate", require: false
+  gem "rspec-rails", "~> 7.0.0"
 end
 
 group :development do
@@ -55,6 +53,9 @@ group :development do
 
   # Highlight the fine-grained location where an error occurred [https://github.com/ruby/error_highlight]
   gem "error_highlight", ">= 0.4.0", platforms: [ :ruby ]
+
+  # annotate models with schema information
+  gem "annotate", require: false
 end
 
 group :test do
