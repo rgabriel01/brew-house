@@ -2,13 +2,14 @@
 #
 # Table name: carts
 #
-#  id               :integer          not null, primary key
-#  discounts        :decimal(10, 2)   not null
-#  gross_price      :decimal(10, 2)   not null
-#  net_price        :decimal(10, 2)   not null
-#  transaction_date :date
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                 :integer          not null, primary key
+#  discounts          :decimal(10, 2)   not null
+#  gross_price        :decimal(10, 2)   not null
+#  net_price          :decimal(10, 2)   not null
+#  transaction_date   :date
+#  transaction_number :integer          not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 require 'rails_helper'
 
@@ -54,6 +55,7 @@ RSpec.describe Cart, type: :model do
       expect(cart.valid?).to be_truthy
       expect(cart.cart_items.size).to eq(2)
       expect(cart.save).to be_truthy
+      expect(cart.transaction_number).to eq(1)
     end
   end
 end

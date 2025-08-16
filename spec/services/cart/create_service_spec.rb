@@ -39,6 +39,7 @@ RSpec.describe Carts::CreateService, type: :service do
 
         cart = result[:cart]
         expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+        expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
         expect(cart[:gross_price]).to eq(9.00)
         expect(cart[:net_price]).to eq(9.00)
         expect(cart[:discounts]).to eq(0)
