@@ -10,6 +10,5 @@
 #  updated_at  :datetime         not null
 #
 class Product < ApplicationRecord
-  validates :name, presence: true
-  validates :price, presence: true
+  validates :name, :price, presence: true
 end
