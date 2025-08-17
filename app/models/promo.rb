@@ -17,6 +17,8 @@ class Promo < ApplicationRecord
 
   has_many :promo_details, dependent: :destroy
 
+  scope :active, -> { where(status: :active) }
+
   enum status: {
     active: "active",
     inactive: "inactive"

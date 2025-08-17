@@ -11,7 +11,7 @@ RSpec.describe Carts::CreateService, type: :service do
     let(:params) do
       {
         cart_items: [
-          { product_id: product1.id, quantity: 2, gross_price: product1.price, net_price: product1.price, subtotal: product1.price * 2, discounts: 0 },
+          { product_id: product1.id, quantity: 2, gross_price: product1.price, net_price: product1.price, subtotal: (product1.price * 2), discounts: 0 },
           { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, subtotal: product2.price, discounts: 0 }
         ]
       }
@@ -19,7 +19,6 @@ RSpec.describe Carts::CreateService, type: :service do
 
     let(:product1) { create(:product, name: "Canned Tuna", description: "Packed with Omega 3", price: 3) }
     let(:product2) { create(:product, name: "Coffee", description: "A rich and aromatic coffee blend.", price: 3) }
-
 
     # Freeze time for consistent test results
     before do
@@ -53,6 +52,61 @@ RSpec.describe Carts::CreateService, type: :service do
           expect(cart_item[:net_price]).to eq(product.price)
           expect(cart_item[:subtotal]).to eq(product.price * cart_item[:quantity])
           expect(cart_item[:discounts]).to eq(0)
+        end
+      end
+    end
+
+    context "cart_items consolidation" do
+      let(:params) do
+        {
+          cart_items: [
+            { product_id: product1.id, quantity: 2, gross_price: product1.price, net_price: product1.price, subtotal: (product1.price * 2), discounts: 0 },
+            { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, subtotal: product2.price, discounts: 0 },
+            { product_id: product1.id, quantity: 1, gross_price: product1.price, net_price: product1.price, subtotal: product1.price, discounts: 0 }
+          ]
+        }
+      end
+
+      it "correctly consolidates product on the cart_items and resolves computations" do
+        result = subject
+        expect(result[:success]).to be_truthy
+
+        cart = result[:cart]
+        expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+        expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
+        expect(cart[:gross_price]).to eq(12.00)
+        expect(cart[:net_price]).to eq(12.00)
+        expect(cart[:discounts]).to eq(0)
+        expect(cart.cart_items.size).to eq(2) # 3 line items, with 2 unique products into just 2 lines
+
+        cart_items = cart.cart_items
+
+        cart_items.each do |cart_item|
+          product = [ product1, product2 ].find { |product| product.id == cart_item.product_id }
+          expect(cart_item[:gross_price]).to eq(product.price)
+          expect(cart_item[:net_price]).to eq(product.price)
+          expect(cart_item[:subtotal]).to eq(product.price * cart_item[:quantity])
+          expect(cart_item[:discounts]).to eq(0)
+        end
+      end
+    end
+
+    context "when cart_items are eligible for promotions" do
+      context "with a buy one get one promotion" do
+        let!(:product) { create(:product, name: "Summer Kiss Lotion", description: "Yet another one of those summer products", price: 3) }
+        let!(:promo) { create(:promo, name: "Summer Sale", code: "SUMMERSALE", description: "Yet another summer sale!", promo_type: Promo.promo_types[:buy_one_get_one]) }
+        let!(:promo_detail) { create(:promo_detail, promo:, product:) }
+        let(:params) do
+          {
+            cart_items: [
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 }
+            ]
+          }
+        end
+
+        it "evaluates the cart for promotions" do
+          result = subject
         end
       end
     end
