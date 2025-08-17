@@ -332,7 +332,7 @@ DEPENDENCIES
   brakeman
   capybara
   database_cleaner-active_record
-  error_highlight (>= 0.4.0)
+  error_highlight (>= 0.7.0)
   factory_bot_rails (~> 6.0)
   importmap-rails
   jbuilder
