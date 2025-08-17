@@ -35,8 +35,16 @@ RSpec.describe Product, type: :model do
   end
 
   context "barcode generation" do
+    context "validates uniqueness of barcode" do
+      it "validates uniqueness of barcode" do
+        Product.create(name: "Test Product", price: 10.0, barcode: "2002140316")
+        duplicate_product = Product.new(name: "Duplicate Product", price: 15.0, barcode: "2002140316")
+        expect(duplicate_product.valid?).to be_falsey
+        expect(duplicate_product.errors[:barcode]).to include("has already been taken")
+      end
+    end
     context "no barcode provided on creation" do
-      it "generates a barcode before creation" do
+      it "generates a barcode before validation" do
         product = Product.create(name: "Test Product", price: 10.0)
         expect(product.barcode).to eq("1000000000000")
       end

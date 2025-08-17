@@ -11,9 +11,10 @@
 #  updated_at  :datetime         not null
 #
 class Product < ApplicationRecord
-  before_create :set_barcode
+  before_validation :set_barcode
 
   validates :name, :price, presence: true
+  validates :barcode, presence: true, uniqueness: true
 
   has_many :promo_details, dependent: :destroy
   has_many :promos, through: :promo_details
