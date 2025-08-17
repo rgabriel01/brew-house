@@ -3,6 +3,7 @@
 # Table name: products
 #
 #  id          :integer          not null, primary key
+#  barcode     :string           not null
 #  description :text
 #  name        :string           not null
 #  price       :decimal(10, 2)   not null
@@ -30,6 +31,21 @@ RSpec.describe Product, type: :model do
 
     it "has many promos through promo_details" do
       expect(product.promos).to include(promo)
+    end
+  end
+
+  context "barcode generation" do
+    context "no barcode provided on creation" do
+      it "generates a barcode before creation" do
+        product = Product.create(name: "Test Product", price: 10.0)
+        expect(product.barcode).to eq("1000000000000")
+      end
+    end
+    context "barcode already provided on creation" do
+      it "does not change the provided barcode" do
+        product = Product.create(name: "Test Product", price: 10.0, barcode: "2002140316")
+        expect(product.barcode).to eq("2002140316")
+      end
     end
   end
 end
