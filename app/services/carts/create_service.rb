@@ -14,6 +14,8 @@ module Carts
     def call
       @cart_items = consolidate_cart_items
 
+      apply_promotions if with_promotions?
+
       cart = Cart.create(
         transaction_date: Date.today,
         gross_price: gross_price,
@@ -24,7 +26,6 @@ module Carts
 
       return { success: false, errors: cart.errors.full_messages } if cart.errors.any?
 
-      # evaluate the cart for promotions
       { success: true, cart: }
     end
 
@@ -60,6 +61,70 @@ module Carts
           subtotal:
         }
       end
+    end
+
+    def promotion_cart_items
+      @promotion_cart_items ||= begin
+        promo_product_ids = promotions.flat_map(&:promo_details).map(&:product_id)
+
+        cart_items.select { |item| promo_product_ids.include?(item[:product_id]) }
+      end
+    end
+
+    def with_promotions?
+      promotion_cart_items.any?
+    end
+
+    def apply_promotions
+      promo, promo_detail = find_promo_for_item(promotion_cart_items.first) # for now, just apply the first promo found
+
+      case promo.promo_type
+      when Promo.promo_types[:buy_one_get_one].downcase
+        apply_buy_one_get_one(promo:, promo_detail:)
+      else
+        puts "Unknown promo type: #{promo.promo_type}"
+      end
+    end
+
+    def promotions
+      @promotions ||= Promo.includes(:promo_details).active
+    end
+
+    def find_promo_for_item(cart_item)
+      promo_detail = promotions.flat_map(&:promo_details).find { |promo| promo.product_id == cart_item[:product_id] }
+      promo = promo_detail.promo if promo_detail
+
+      [ promo, promo_detail ]
+    end
+
+    def apply_buy_one_get_one(promo:, promo_detail:)
+      promo_product_id = promo_detail.product_id
+      cart_item = cart_items.find { |item| item[:product_id] == promo_product_id }
+      promo_cart_item = cart_items.delete(cart_item)
+
+      # we split the quantities into two parts: full priced and free priced
+      full_priced_quantity = (promo_cart_item[:quantity].to_f / 2).round
+      free_priced_quantity = promo_cart_item[:quantity] - full_priced_quantity
+
+      # full priced items
+      cart_items << {
+        product_id: promo_cart_item[:product_id],
+        quantity: full_priced_quantity,
+        gross_price: promo_cart_item[:gross_price],
+        discounts: 0,
+        net_price: promo_cart_item[:gross_price],
+        subtotal: promo_cart_item[:gross_price] * full_priced_quantity
+      }
+
+      # free priced items
+      cart_items << {
+        product_id: promo_cart_item[:product_id],
+        quantity: free_priced_quantity,
+        gross_price: 0,
+        discounts: 0,
+        net_price: 0,
+        subtotal: 0
+      }
     end
   end
 end

@@ -94,19 +94,65 @@ RSpec.describe Carts::CreateService, type: :service do
     context "when cart_items are eligible for promotions" do
       context "with a buy one get one promotion" do
         let!(:product) { create(:product, name: "Summer Kiss Lotion", description: "Yet another one of those summer products", price: 3) }
+        let!(:product2) { create(:product, name: "Banana Towel", description: "Yet another one of those super absorbent towels", price: 1) }
         let!(:promo) { create(:promo, name: "Summer Sale", code: "SUMMERSALE", description: "Yet another summer sale!", promo_type: Promo.promo_types[:buy_one_get_one]) }
         let!(:promo_detail) { create(:promo_detail, promo:, product:) }
         let(:params) do
           {
             cart_items: [
               { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
-              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 }
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, subtotal: product2.price * 1, discounts: 0 }
             ]
           }
         end
 
-        it "evaluates the cart for promotions" do
+        it "applies the promotion mechanics accordingly" do
           result = subject
+
+          cart = result[:cart]
+          expect(result[:success]).to be_truthy
+          expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+          expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
+          expect(cart[:gross_price]).to eq(7.00)
+          expect(cart[:net_price]).to eq(7.00)
+          expect(cart[:discounts]).to eq(0)
+          expect(cart.cart_items.size).to eq(3) # 3 line items, with 2 unique products into just 2 lines
+
+          cart_items = cart.cart_items
+
+          expect(cart_items.select { |cart_item| cart_item.gross_price == 0 }.length).to eq(1) # One item should be free due to the promotion
+          expect(cart_items.select { |cart_item| cart_item.gross_price > 0 }.length).to eq(2) # One item should be full price due to the promotion
+        end
+
+        context "when product items are consolidated" do
+          let(:params) do
+            {
+              cart_items: [
+                { product_id: product.id, quantity: 3, gross_price: product.price, net_price: product.price, subtotal: product.price * 3, discounts: 0 },
+                { product_id: product2.id, quantity: 1, gross_price: product2.price, net_price: product2.price, subtotal: product2.price * 1, discounts: 0 }
+              ]
+            }
+          end
+
+          it "applies the promotion mechanics accordingly" do
+            result = subject
+
+            cart = result[:cart]
+            expect(result[:success]).to be_truthy
+            expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+            expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
+            expect(cart[:gross_price]).to eq(7.00)
+            expect(cart[:net_price]).to eq(7.00)
+            expect(cart[:discounts]).to eq(0)
+            expect(cart.cart_items.size).to eq(3) # 3 line items, with 2 unique products into just 2 lines
+
+            cart_items = cart.cart_items
+
+            expect(cart_items.select { |cart_item| cart_item.gross_price == 0 }.length).to eq(1) # One item should be free due to the promotion
+            expect(cart_items.select { |cart_item| cart_item.gross_price > 0 }.length).to eq(2) # One item should be full price due to the promotion
+          end
         end
       end
     end
