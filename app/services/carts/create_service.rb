@@ -83,6 +83,8 @@ module Carts
         apply_buy_one_get_one(promo:, promo_detail:)
       when Promo.promo_types[:buy_more_pay_less].downcase
         apply_buy_more_pay_less(promo:, promo_detail:)
+      when Promo.promo_types[:buy_more_pay_for_a_fraction].downcase
+        apply_buy_more_pay_for_a_fraction(promo:, promo_detail:)
       else
         puts "Unknown promo type: #{promo.promo_type}"
       end
@@ -157,6 +159,28 @@ module Carts
           discounts: 0,
           net_price: promo_cart_item[:gross_price],
           subtotal: promo_cart_item[:gross_price] * full_priced_quantity
+        }
+      else
+        cart_items << cart_item
+      end
+    end
+
+    def apply_buy_more_pay_for_a_fraction(promo:, promo_detail:)
+      promo_product_id = promo_detail.product_id
+      cart_item = cart_items.find { |item| item[:product_id] == promo_product_id }
+      promo_cart_item = cart_items.delete(cart_item)
+
+      quantity_trigger = promo_detail.quantity_trigger # triggers the discount
+      pricing_mechanic = (promo_detail.pricing_mechanic || "0").to_f # new price to apply
+
+      if promo_cart_item[:quantity] > quantity_trigger
+        cart_items << {
+          product_id: promo_cart_item[:product_id],
+          quantity: promo_cart_item[:quantity],
+          gross_price: pricing_mechanic,
+          discounts: 0,
+          net_price: pricing_mechanic,
+          subtotal: pricing_mechanic * promo_cart_item[:quantity]
         }
       else
         cart_items << cart_item

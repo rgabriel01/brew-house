@@ -190,6 +190,37 @@ RSpec.describe Carts::CreateService, type: :service do
           expect(cart_item_details_subtotal).to eq(cart[:gross_price].to_f)
         end
       end
+
+      context "with a buy more pay for a fraction" do
+        let!(:product) { create(:product, name: "Coffee", description: "Strong and angry", price: 11.23) }
+        let!(:promo) { create(:promo, name: "Buy more, Pay for a fraction", code: "BMPF", description: "Yet another buy more fruit less all", promo_type: Promo.promo_types[:buy_more_pay_for_a_fraction]) }
+        let!(:promo_detail) { create(:promo_detail, promo:, product:, pricing_mechanic:, quantity_trigger:) }
+        let(:pricing_mechanic) { "7.48" }
+        let(:quantity_trigger) { 3 }
+        let(:params) do
+          {
+            cart_items: [
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 }
+            ]
+          }
+        end
+
+        it "applies the promotion mechanics accordingly" do
+          result = subject
+
+          cart = result[:cart]
+          expect(result[:success]).to be_truthy
+          expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+          expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
+          expect(cart[:gross_price]).to eq(BigDecimal("29.92"))
+          expect(cart[:net_price]).to eq(BigDecimal("29.92"))
+          expect(cart[:discounts]).to eq(0)
+          expect(cart.cart_items.size).to eq(1)
+        end
+      end
     end
   end
 end

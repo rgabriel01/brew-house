@@ -27,6 +27,6 @@ class Promo < ApplicationRecord
   enum promo_type: {
     buy_one_get_one: "BUY_ONE_GET_ONE",
     buy_more_pay_less: "BUY_MORE_PAY_LESS",
-    buy_more_pay_for_fraction: "BUY_MORE_PAY_FOR_A_FRACTION"
+    buy_more_pay_for_a_fraction: "BUY_MORE_PAY_FOR_A_FRACTION"
   }, _prefix: true
 end
