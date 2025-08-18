@@ -2,11 +2,13 @@
 #
 # Table name: promo_details
 #
-#  id         :integer          not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  product_id :integer          not null
-#  promo_id   :integer          not null
+#  id               :integer          not null, primary key
+#  pricing_mechanic :string
+#  quantity_trigger :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  product_id       :integer          not null
+#  promo_id         :integer          not null
 #
 # Indexes
 #

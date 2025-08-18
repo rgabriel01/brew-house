@@ -155,6 +155,41 @@ RSpec.describe Carts::CreateService, type: :service do
           end
         end
       end
+
+      context "with a buy more pay less promotion" do
+        let!(:product) { create(:product, name: "Strawberries", description: "Sweet and juicy!", price: 5) }
+        let!(:promo) { create(:promo, name: "Buy more, Pay less", code: "BMPL", description: "Yet another buy more fruit for less", promo_type: Promo.promo_types[:buy_more_pay_less]) }
+        let!(:promo_detail) { create(:promo_detail, promo:, product:, pricing_mechanic:, quantity_trigger:) }
+        let(:pricing_mechanic) { "4.5" }
+        let(:quantity_trigger) { 3 }
+        let(:params) do
+          {
+            cart_items: [
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 },
+              { product_id: product.id, quantity: 1, gross_price: product.price, net_price: product.price, subtotal: product.price * 1, discounts: 0 }
+            ]
+          }
+        end
+
+        it "applies the promotion mechanics accordingly" do
+          result = subject
+
+          cart = result[:cart]
+          expect(result[:success]).to be_truthy
+          expect(cart[:transaction_date]).to eq(Date.new(2025, 5, 10))
+          expect(cart[:transaction_number]).to eq(1) # Assuming this is the first cart created
+          expect(cart[:gross_price]).to eq(19.5)
+          expect(cart[:net_price]).to eq(19.5)
+          expect(cart[:discounts]).to eq(0)
+          expect(cart.cart_items.size).to eq(2)
+
+          cart_items = cart.cart_items
+          cart_item_details_subtotal = cart_items.sum { |cart_item| cart_item[:subtotal] }.to_f
+          expect(cart_item_details_subtotal).to eq(cart[:gross_price].to_f)
+        end
+      end
     end
   end
 end
