@@ -1,0 +1,27 @@
+<div class="w-md">
+  <div class="text-lg font-bold mb-3">Your Cart</div>
+  <table class="table-auto w-full border-collapse text-sm">
+    <thead>
+      <tr>
+        <th class="border-b border-gray-200 text-left font-medium text-gray-400">Product</th>
+        <th class="border-b border-gray-200 text-left font-medium text-gray-400">Price</th>
+        <th class="border-b border-gray-200 text-left font-medium text-gray-400">Quantity</th>
+        <th class="border-b border-gray-200 text-left font-medium text-gray-400">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% cart.cart_items.each do |item| %>
+        <tr>
+          <td><%= item.product.name %></td>
+          <td><%= number_to_currency(item.net_price) %></td>
+          <td><%= item.quantity %></td>
+          <td><%= number_to_currency(item.subtotal) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="mb-4">
+    <strong>Grand Total: <%= number_to_currency(total_subtotal) %></strong>
+  </div>
+</div>

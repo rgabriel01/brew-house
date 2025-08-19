@@ -1,0 +1,17 @@
+<%= form_with(url: carts_path, local: true) do |f| %>
+  <%= hidden_field_tag :cart_id, cart.id if cart.present? %>
+  <div class="flex items-center mb-[8px] gap-x-8">
+    <div class="flex-auto">
+      <%= f.label :barcode, class: "block" %>
+      <%= f.text_field :barcode, class: "py-1 px-2 w-full border border-gray-300 rounded-md" %>
+    </div>
+
+    <div class="flex-auto">
+      <%= f.label :quantity, class: "block" %>
+      <%= f.number_field :quantity, value: 1, min: 1, class: "py-1 px-2 w-24 border border-gray-300 rounded-md" %>
+    </div>
+  </div>
+  <div>
+    <%= f.submit "#{cart.present? ? "Update" : "Create" } Cart", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+<% end %>

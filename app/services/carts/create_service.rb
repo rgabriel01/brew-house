@@ -111,24 +111,28 @@ module Carts
       free_priced_quantity = promo_cart_item[:quantity] - full_priced_quantity
 
       # full priced items
-      cart_items << {
-        product_id: promo_cart_item[:product_id],
-        quantity: full_priced_quantity,
-        gross_price: promo_cart_item[:gross_price],
-        discounts: 0,
-        net_price: promo_cart_item[:gross_price],
-        subtotal: promo_cart_item[:gross_price] * full_priced_quantity
-      }
+      if full_priced_quantity > 0
+        cart_items << {
+          product_id: promo_cart_item[:product_id],
+          quantity: full_priced_quantity,
+          gross_price: promo_cart_item[:gross_price],
+          discounts: 0,
+          net_price: promo_cart_item[:gross_price],
+          subtotal: promo_cart_item[:gross_price] * full_priced_quantity
+        }
+      end
 
       # free priced items
-      cart_items << {
-        product_id: promo_cart_item[:product_id],
-        quantity: free_priced_quantity,
-        gross_price: 0,
-        discounts: 0,
-        net_price: 0,
-        subtotal: 0
-      }
+      if free_priced_quantity > 0
+        cart_items << {
+          product_id: promo_cart_item[:product_id],
+          quantity: free_priced_quantity,
+          gross_price: 0,
+          discounts: 0,
+          net_price: 0,
+          subtotal: 0
+        }
+      end
     end
 
     def apply_buy_more_pay_less(promo:, promo_detail:)

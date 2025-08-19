@@ -8,7 +8,7 @@ Your easy store cash register
 
 ## Prerequisites
 
-- Ruby (3.4.0)
+- Ruby (3.3.0)
 
 ## Database Setup
 
@@ -30,5 +30,10 @@ Your easy store cash register
    ```bash
    bin/rails server
    ```
+
+3. Startup tailwind listener (on a separate terminal)
+  ```bash
+  bin/rails tailwindcss:watch
+  ```
 
 The application will be available at http://localhost:3000

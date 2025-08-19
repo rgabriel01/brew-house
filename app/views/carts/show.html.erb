@@ -1,0 +1,9 @@
+<div class="flex mb-10">
+  <%= render 'carts/form', cart: @cart %>
+</div>
+
+<% if @cart.present? %>
+  <div>
+    <%= render 'carts/cart', cart: @cart, total_subtotal: @total_subtotal %>
+  </div>
+<% end %>
