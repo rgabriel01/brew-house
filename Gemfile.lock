@@ -148,7 +148,6 @@ GEM
     matrix (0.4.3)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.8.0)
     net-imap (0.5.9)
@@ -161,8 +160,9 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.9)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.18.9-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-gnu)
       racc (~> 1.4)
     parallel (1.27.0)
     parser (3.3.9.0)
@@ -290,11 +290,16 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
-    sqlite3 (2.7.3)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (2.7.3-x86_64-darwin)
+    sqlite3 (2.7.3-x86_64-linux-gnu)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.7)
+    tailwindcss-rails (4.3.0)
+      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.1.11-x86_64-darwin)
+    tailwindcss-ruby (4.1.11-x86_64-linux-gnu)
     thor (1.4.0)
     timecop (0.9.10)
     timeout (0.4.3)
@@ -343,6 +348,8 @@ DEPENDENCIES
   sprockets-rails
   sqlite3 (>= 1.4)
   stimulus-rails
+  tailwindcss-rails (~> 4.3)
+  tailwindcss-ruby (~> 4.1)
   timecop
   turbo-rails
   tzinfo-data

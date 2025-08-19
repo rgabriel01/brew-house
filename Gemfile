@@ -5,7 +5,7 @@ gem "rails", "~> 7.2.2", ">= 7.2.2.2"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 1.4"
+gem "sqlite3", ">= 1.4", platforms: :ruby
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
@@ -31,6 +31,9 @@ gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
+
+gem "tailwindcss-ruby", "~> 4.1"
+gem "tailwindcss-rails", "~> 4.3"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
