@@ -1,10 +1,12 @@
 # Brew house
 
 Your easy store cash register
+[Click here for a quick demo](https://www.loom.com/share/614c6edcd6e74d0493909940b9c08224?sid=a2e17162-f18f-41d5-ac26-9a8c7b0067b6)
 
 ## Tech Stack
 
 - Ruby on Rails 7.2
+- Tailwind 4
 
 ## Prerequisites
 
