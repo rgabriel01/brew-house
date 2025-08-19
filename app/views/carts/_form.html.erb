@@ -1,14 +1,14 @@
-<%= form_with(url: carts_path, local: true) do |f| %>
+<%= form_with(model: cart) do |f| %>
   <%= hidden_field_tag :cart_id, cart.id if cart.present? %>
   <div class="flex items-center mb-[8px] gap-x-8">
     <div class="flex-auto">
       <%= f.label :barcode, class: "block" %>
-      <%= f.text_field :barcode, class: "py-1 px-2 w-full border border-gray-300 rounded-md" %>
+      <%= f.text_field :barcode, required: true, class: "py-1 px-2 w-full border border-gray-300 rounded-md" %>
     </div>
 
     <div class="flex-auto">
       <%= f.label :quantity, class: "block" %>
-      <%= f.number_field :quantity, value: 1, min: 1, class: "py-1 px-2 w-24 border border-gray-300 rounded-md" %>
+      <%= f.number_field :quantity, value: 1, min: 1, required: true, class: "py-1 px-2 w-24 border border-gray-300 rounded-md" %>
     </div>
   </div>
   <div>

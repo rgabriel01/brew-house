@@ -4,6 +4,7 @@
     <thead>
       <tr>
         <th class="border-b border-gray-200 text-left font-medium text-gray-400">Product</th>
+        <th class="border-b border-gray-200 text-left font-medium text-gray-400">Barcode</th>
         <th class="border-b border-gray-200 text-left font-medium text-gray-400">Price</th>
         <th class="border-b border-gray-200 text-left font-medium text-gray-400">Quantity</th>
         <th class="border-b border-gray-200 text-left font-medium text-gray-400">Total</th>
@@ -13,6 +14,7 @@
       <% cart.cart_items.each do |item| %>
         <tr>
           <td><%= item.product.name %></td>
+          <td><%= item.product.barcode %></td>
           <td><%= number_to_currency(item.net_price) %></td>
           <td><%= item.quantity %></td>
           <td><%= number_to_currency(item.subtotal) %></td>
